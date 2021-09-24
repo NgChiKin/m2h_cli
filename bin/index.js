@@ -8,3 +8,5 @@ program.version(version);
 program.argument('<name>', '<name>.md to <name>.html');
 
 program.parse(process.argv);
+
+console.log(program)
