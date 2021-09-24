@@ -3,19 +3,25 @@ const marked = require('marked');
 const path = require('path');
 const fs = require('fs');
 
+// 执行命令时所在的目录
+const basePath = process.cwd();
+
+// 判断当前文件是否存在
 const hasSameNameFileInThisPath = (fileName, ext) => {
   try {
-    fs.accessSync(path.join(__dirname, `${fileName}.${ext}`));
+    const src = path.join(basePath, `${fileName}.${ext}`);
+    fs.accessSync(src);
     return true;
   } catch (error) {
     return false;
   }
 };
 
+// 读取文件
 const getText = (fileName, ext) => {
   try {
     const text = fs.readFileSync(
-      path.join(__dirname, `${fileName}.${ext}`),
+      path.join(basePath, `${fileName}.${ext}`),
       'utf-8'
     );
     return text;
@@ -24,11 +30,22 @@ const getText = (fileName, ext) => {
   }
 };
 
-const deleteFileByName = (fileName) => {
+// 删除文件
+const deleteFileByName = (fileName, ext) => {
   try {
-    fs.unlinkSync(path.join(__dirname, fileName));
+    fs.unlinkSync(path.join(basePath, `${fileName}.${ext}`));
   } catch (error) {
-    console.log(error);
+    throw error;
+  }
+};
+
+//
+const htmlGenerator = (fileName, html) => {
+  try {
+    fs.writeFileSync(path.join(basePath, `${fileName}.html`), html);
+    console.log(chalk.greenBright(`${fileName}.html generated successfully`));
+  } catch (err) {
+    throw err;
   }
 };
 
@@ -38,14 +55,12 @@ const m2h = (fileName) => {
   }
 
   if (hasSameNameFileInThisPath(fileName, 'html')) {
-    deleteFileByName(fileName);
+    deleteFileByName(fileName, 'html');
   }
 
   const htmlText = marked(getText(fileName, 'md'));
 
-  fs.writeFileSync()
-
-  console.log(chalk.greenBright(fileName));
+  htmlGenerator(fileName, htmlText);
 };
 
 module.exports = m2h;
